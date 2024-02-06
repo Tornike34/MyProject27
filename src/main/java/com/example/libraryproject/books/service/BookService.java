@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public class BookService {
 
     public List<BookDTO> getAllBooks(int sortedId) {
         if (sortedId == 1) {
-            return bookRepository.findAllSortedByPagesAsc();
+            return  bookRepository.findAllSortedByPagesAsc();
         }
         if (sortedId == 2) {
             return bookRepository.findAllSortedByPagesDesc();
@@ -30,31 +29,38 @@ public class BookService {
     }
 
 
-    public List<BookDTO> getBookByISBN(String isbn) {
-        return bookRepository.findByISBN(isbn)
-                .map(Collections::singletonList)
-                .orElseGet(Collections::emptyList);
+    public List<BookDTO> getBookByISBN(String isbn,Integer sortedId) {
+        if(sortedId==1){
+            return bookRepository.findByISBNASC(isbn);
+        }
+        if(sortedId==2){
+            return bookRepository.findByISBNDESC(isbn);
+        }
+        return bookRepository.findAll();
     }
 
-    public List<BookDTO> getBookByTitle(String title) {
-        return bookRepository.findByTitle(title)
-                .map(Collections::singletonList)
-                .orElseGet(Collections::emptyList);
+    public List<BookDTO> getBookByTitle(String title,Integer sortedId) {
+        if(sortedId==1){
+            return bookRepository.findByTitleASC(title);
+        }
+        if(sortedId==2){
+            return bookRepository.findByTitleDESC(title);
+        }
+        return bookRepository.findAll();
+
+    }
+    public List<BookDTO> getBooksByAuthor(String author, Integer sortedId) {
+        if(sortedId==1){
+            return bookRepository.findByAuthorAsc(author);
+        }
+        if(sortedId==2){
+            return bookRepository.findByAuthorDesc(author);
+        }
+        return bookRepository.findAll();
     }
 
-    public List<BookDTO> getBooksByAuthorAsc(String author) {
-        return bookRepository.findByAuthorAsc(author);
-    }
-    public List<BookDTO> getBooksByAuthorDesc(String author) {
-        return bookRepository.findByAuthorDesc(author);
-    }
-    public List<BookDTO> getBooksById(String author){
-        return bookRepository.sortById(author);
-    }
-    public List<BookDTO> getBookById(Long id) {
-        Optional<BookDTO> book = bookRepository.findById(id);
-        return book.map(Collections::singletonList)
-                .orElseGet(Collections::emptyList);
+    public Optional<BookDTO> getBookById(Long id) {
+        return bookRepository.findById(id);
     }
 
     public void addBook(@NotNull BookDTO bookDTO) {
@@ -67,6 +73,7 @@ public class BookService {
     public BookDTO updateBook(BookDTO bookDTO){
         return bookRepository.save(bookDTO);
     }
+
 
 
 }

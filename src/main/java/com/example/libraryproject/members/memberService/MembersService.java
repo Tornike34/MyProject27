@@ -34,4 +34,35 @@ public class MembersService {
     public Users updateUsers(Users updatedUsers) {
         return membersRepository.save(updatedUsers);
     }
+
+    public List<Users> getUserByName(String name, Integer sortedId) {
+        if(sortedId==1){
+            return membersRepository.findByNameASC(name);
+        }
+        if(sortedId==2){
+            return membersRepository.findByNameDESC(name);
+        }
+        return membersRepository.findAll();
+    }
+
+    public List<Users> getUserByPersonalNumber(String personalNumber) {
+        if(personalNumber!=null){
+            return membersRepository.getUserByPersonalNumber(personalNumber);
+        }
+        return membersRepository.findAll();
+    }
+
+    public List<Users> getUserByEmail(String email) {
+        if (email!=null){
+            return membersRepository.getUserByEmail(email);
+        }
+        return membersRepository.findAll();
+    }
+
+    public List<Users> getUserByPhoneNumber(String phoneNumber) {
+        if(phoneNumber!=null){
+            return membersRepository.getUserByPhoneNumber(phoneNumber);
+        }
+        return membersRepository.findAll();
+    }
 }

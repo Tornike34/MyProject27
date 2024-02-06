@@ -3,83 +3,47 @@ package com.example.libraryproject.books.controller;
 import com.example.libraryproject.books.DTO.BookDTO;
 import com.example.libraryproject.books.service.BookService;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
-    @GetMapping("/sortedId")
-    public ResponseEntity<List<BookDTO>> getAllBook(
-            @RequestParam(required = false) int sortedId) {
-        List<BookDTO> books = null;
-        if (sortedId == 1) {
-            books = bookService.getAllBooks(sortedId);
-        }
-        if (sortedId == 2) {
-            books = bookService.getAllBooks(sortedId);
-        }
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
-        return ResponseEntity.ok(books);
+    @GetMapping("/sortedId/{sortedId}")
+    public List<BookDTO> getAllBook(@PathVariable int sortedId){
+        return bookService.getAllBooks(sortedId);
     }
 
 
-    @GetMapping("/search/byISBN")
-    public ResponseEntity<List<BookDTO>> searchBooksByISBN(
-            @RequestParam(required = false) String isbn) {
-        List<BookDTO> books = null;
-        if (isbn != null) {
-            books = bookService.getBookByISBN(isbn);
-        }
-        return ResponseEntity.ok(books);
+
+    @GetMapping("/search/byISBN/{isbn}/sortedId/{sortedId}")
+    public List<BookDTO> searchBooksByISBN(@PathVariable String isbn,@PathVariable Integer sortedId) {
+        return bookService.getBookByISBN(isbn,sortedId);
     }
 
-    @GetMapping("/search/byTitle")
-    public ResponseEntity<List<BookDTO>> searchBooksByTitle(
-            @RequestParam(required = false) String title) {
-        List<BookDTO> books = null;
-        if (title != null) {
-            books = bookService.getBookByTitle(title);
-        }
-        return ResponseEntity.ok(books);
+    @GetMapping("/search/byTitle/{title}/sortedId/{sortedId}")
+    public List<BookDTO> searchBooksByTitle(@PathVariable String title,@PathVariable Integer sortedId){
+        return bookService.getBookByTitle(title,sortedId);
     }
 
-    @GetMapping("/search/byAuthor")
-    public ResponseEntity<List<BookDTO>> searchBooksByAuthor(
-            @RequestParam(required = false) String author,
-            @RequestParam(required = false) int sortedId) {
-        List<BookDTO> books;
-        switch (sortedId) {
-            case 1:
-                books = bookService.getBooksByAuthorAsc(author);
-                break;
-            case 2:
-                books = bookService.getBooksByAuthorDesc(author);
-                break;
-            case 0:
-                books = bookService.getBooksById(author);
-                break;
-            default:
-                return ResponseEntity.badRequest().body(null);
-        }
-        return ResponseEntity.ok(books);
-    }
+    @GetMapping("/search/byAuthor/{author}/sortedId/{sortedId}")
+    public List<BookDTO> searchBooksByAuthor(@PathVariable String author,@PathVariable Integer sortedId){
+        return bookService.getBooksByAuthor(author,sortedId);
 
-    @GetMapping("/search/ById")
-    public ResponseEntity<List<BookDTO>> searchBooksById(
-            @RequestParam(required = false) Long id) {
-        List<BookDTO> books = null;
-        if (id != 0) {
-            books = bookService.getBookById(id);
-        }
-        return ResponseEntity.ok(books);
+    }
+    @GetMapping("/search/byId/{id}")
+    public Optional<BookDTO> searchBooksById(@PathVariable Long id){
+        return bookService.getBookById(id);
     }
 
     @PostMapping("/addBook")

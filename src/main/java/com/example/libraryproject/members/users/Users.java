@@ -7,6 +7,7 @@ import java.util.Date;
 @Entity
 public class Users {
     private String name;
+    @Column(unique = true)
     private String personalNumber;
     private String phoneNumber;
     private String email;
